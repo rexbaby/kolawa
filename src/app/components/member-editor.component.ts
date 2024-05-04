@@ -1,7 +1,16 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogRef,
+  MatDialogModule,
+} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-member-editor',
@@ -46,6 +55,9 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/materia
         </div>
       </form>
     </mat-dialog-content>
+    <mat-dialog-actions>
+      <button [disabled]="form.invalid">送出</button>
+    </mat-dialog-actions>
   `,
   styles: [],
 })
@@ -54,7 +66,7 @@ export class MemberEditorComponent {
   constructor(
     public matDialogRef: MatDialogRef<MemberEditorComponent>,
     private fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: { mode: T }
+    @Inject(MAT_DIALOG_DATA) public data: { mode: T },
   ) {
     this.form = this.fb.group({
       regionCode: [10011, Validators.required],

@@ -1,11 +1,11 @@
-import { Component, EventEmitter, Input, Output, OnInit, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { Location, Region, Staff } from 'src/app/api.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { RouterChangeHandlerService } from 'src/app/router-change-handler.service';
-import { Breadcrumb } from 'src/app/components/navigation/navigation.component';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { Router, ActivatedRoute } from '@angular/router';
+import { ILocation, Region, Staff } from '../api.service';
+import { Breadcrumb } from '../components/navigation.component';
+import { RouterChangeHandlerService } from '../router-change-handler.service';
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-table',
@@ -18,15 +18,23 @@ import { MatButtonModule } from '@angular/material/button';
       <td mat-cell *matCellDef="let element">
         <div [ngSwitch]="column.col">
           <ng-container *ngSwitchCase="'action'">
-            <button mat-raised-button (click)="goLocation(element)">區域</button>
+            <button mat-raised-button (click)="goLocation(element)">
+              區域
+            </button>
             <button mat-raised-button (click)="gogo(element)">人員</button>
           </ng-container>
           <ng-container *ngSwitchCase="'isValid'">
-            <button mat-raised-button (click)="gogo(element)" *ngIf="element['SuperiorNumber']">
+            <button
+              mat-raised-button
+              (click)="gogo(element)"
+              *ngIf="element['SuperiorNumber']"
+            >
               轄下
             </button>
           </ng-container>
-          <ng-container *ngSwitchDefault>{{ element[column.col] }}</ng-container>
+          <ng-container *ngSwitchDefault>{{
+            element[column.col]
+          }}</ng-container>
         </div>
       </td>
     </ng-container>
@@ -54,7 +62,7 @@ export class TableComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private routerChangeHandlerService: RouterChangeHandlerService
+    private routerChangeHandlerService: RouterChangeHandlerService,
   ) {}
 
   ngOnInit() {
@@ -80,10 +88,12 @@ export class TableComponent implements OnInit {
 
     console.log(breadcrumb);
     this.routerChangeHandlerService.setRouterChangeRouterList(breadcrumb);
-    this.router.navigate(['/home', 'fieldStaff'], { queryParams: { name: row.region } });
+    this.router.navigate(['/home', 'fieldStaff'], {
+      queryParams: { name: row.region },
+    });
   }
 
-  goLocation(row: Location) {
+  goLocation(row: ILocation) {
     const breadcrumb = {} as Breadcrumb;
     breadcrumb.name = row.region;
     breadcrumb.breadType = 'location';

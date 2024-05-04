@@ -35,7 +35,7 @@ export class ApiService {
     ]);
   }
 
-  getLocation(): Observable<Location[]> {
+  getLocation(): Observable<ILocation[]> {
     return of([
       {
         id: '5',
@@ -379,7 +379,7 @@ export interface Staff {
   SuperiorNumber: string;
 }
 
-export interface Location {
+export interface ILocation {
   id: string;
   location: string;
   locationNumber: string;

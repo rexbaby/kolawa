@@ -1,13 +1,13 @@
-import { AuthService } from './../../services/auth.service';
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
+import { Component } from '@angular/core';
+import { ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { Router } from '@angular/router';
+import { AuthService } from './auth.service';
+import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -23,7 +23,11 @@ import { MatButtonModule } from '@angular/material/button';
     <div class=" w-full h-full flex justify-center items-center">
       <mat-card class="w-96">
         <mat-card-content>
-          <form [formGroup]="form" (ngSubmit)="login()" class="w-full flex justify-center flex-col">
+          <form
+            [formGroup]="form"
+            (ngSubmit)="login()"
+            class="w-full flex justify-center flex-col"
+          >
             <div>id</div>
             <mat-form-field>
               <input matInput type="text" formControlName="loginId" />
@@ -33,7 +37,9 @@ import { MatButtonModule } from '@angular/material/button';
               <input matInput type="password" formControlName="password" />
             </mat-form-field>
             <div>
-              <button mat-raised-button type="submit" [disabled]="form.invalid">Login</button>
+              <button mat-raised-button type="submit" [disabled]="form.invalid">
+                Login
+              </button>
             </div>
           </form>
         </mat-card-content>
@@ -49,7 +55,11 @@ export class LoginComponent {
     password: ['', [Validators.required]],
   });
 
-  constructor(private fb: FormBuilder, private router: Router, private auth: AuthService) {}
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private auth: AuthService,
+  ) {}
 
   login(): void {
     const { loginId, password } = this.form.value;

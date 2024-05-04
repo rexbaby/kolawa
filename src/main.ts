@@ -11,10 +11,20 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 //   .catch((err) => console.error(err));
 
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withRouterConfig } from '@angular/router';
 import { ROUTES } from './app/app-routing.module';
 import { importProvidersFrom } from '@angular/core';
 
 bootstrapApplication(AppComponent, {
-  providers: [provideAnimations(), importProvidersFrom(HttpClientModule), provideRouter(ROUTES)],
+  providers: [
+    provideAnimations(),
+    importProvidersFrom(HttpClientModule),
+    provideRouter(
+      ROUTES,
+      withRouterConfig({
+        paramsInheritanceStrategy: 'always',
+        onSameUrlNavigation: 'reload',
+      }),
+    ),
+  ],
 });

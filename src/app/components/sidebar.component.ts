@@ -15,8 +15,12 @@ import { MatExpansionModule } from '@angular/material/expansion';
           <mat-panel-title> 組織 </mat-panel-title>
         </mat-expansion-panel-header>
 
-        <button mat-button color="primary" (click)="go('addressBook')">通訊錄</button>
-        <button mat-button color="primary" (click)="go('fieldStaff')">外勤人員</button>
+        <button mat-button color="primary" (click)="go('addressBook')">
+          通訊錄
+        </button>
+        <button mat-button color="primary" (click)="go('fieldStaff')">
+          外勤人員
+        </button>
       </mat-expansion-panel>
     </mat-accordion>
   `,

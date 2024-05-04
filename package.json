@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "prepare": "husky install && npx husky set .husky/pre-commit \"npx pretty-quick --staged\" && ng g ngx-prettier-git-hooks:after-ng-add"
+    "prepare": "husky install"
   },
   "private": true,
   "dependencies": {

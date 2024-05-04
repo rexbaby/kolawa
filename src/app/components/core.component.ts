@@ -4,11 +4,11 @@ import { Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { HomeComponent } from '../components/home/home.component';
-import { NavigationComponent } from '../components/navigation/navigation.component';
-import { SearchBarComponent } from '../search-bar/search-bar.component';
+import { HomeComponent } from './home.component';
+import { BreadcrumbComponent } from './navigation.component';
+import { SearchBarComponent } from './search-bar.component';
 import { CdkAccordionModule } from '@angular/cdk/accordion';
-import { SidebarComponent } from '../components/sidebar/sidebar.component';
+import { SidebarComponent } from './sidebar.component';
 
 @Component({
   selector: 'app-nav',
@@ -43,7 +43,7 @@ import { SidebarComponent } from '../components/sidebar/sidebar.component';
     MatToolbarModule,
     MatSidenavModule,
     HomeComponent,
-    NavigationComponent,
+    BreadcrumbComponent,
     SearchBarComponent,
     NgFor,
     CdkAccordionModule,
@@ -51,7 +51,7 @@ import { SidebarComponent } from '../components/sidebar/sidebar.component';
     SidebarComponent,
   ],
 })
-export class NavComponent {
+export class CoreComponent {
   items = ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'];
   expandedIndex = 0;
 

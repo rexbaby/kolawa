@@ -1,19 +1,19 @@
-import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
-import { BehaviorSubject, Observable, filter } from 'rxjs';
-import { ApiService, Region, Staff } from '../api.service';
+import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
+import { ApiService, Staff } from '../api.service';
+import { Breadcrumb } from '../components/navigation.component';
 import { RouterChangeHandlerService } from '../router-change-handler.service';
-import { ColumnVM, T, TableComponent } from './table/table.component';
-import { Breadcrumb } from '../components/navigation/navigation.component';
+import { TableComponent, T, ColumnVM } from './table.component';
 
 @Component({
   selector: 'app-table-container',
   standalone: true,
   imports: [CommonModule, RouterModule, MatButtonModule, TableComponent],
   template: ` <div class="bg-yellow-400 m-2">
-    <app-table [data]="data" [Columns]="Columns" (gogo)="go()"></app-table>page : {{ page }} data :
+    <app-table [data]="data" [Columns]="Columns" (gogo)="go()"></app-table>page
+    : {{ page }} data :
   </div>`,
   styles: [],
 })
@@ -27,7 +27,7 @@ export class TableContainerComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private api: ApiService,
     private router: Router,
-    private routerChangeHandlerService: RouterChangeHandlerService
+    private routerChangeHandlerService: RouterChangeHandlerService,
   ) {
     this.page = this.activatedRoute.snapshot.params['page'] || 1;
     this.routerChangeHandlerService.routerChangeRouterList.subscribe((res) => {
@@ -41,18 +41,27 @@ export class TableContainerComponent implements OnInit {
 
         // eslint-disable-next-line no-inner-declarations
         function findSubordinates(superior: string, list: Staff[]) {
-          const subordinates = list.filter((item) => item.SuperiorNumber === superior);
+          const subordinates = list.filter(
+            (item) => item.SuperiorNumber === superior,
+          );
           let allSubordinates = [...subordinates];
 
           subordinates.forEach((element) => {
-            allSubordinates = allSubordinates.concat(findSubordinates(element.userId, list));
+            allSubordinates = allSubordinates.concat(
+              findSubordinates(element.userId, list),
+            );
           });
           return subordinates;
         }
         if (res.breadType === 'staff')
-          this.data = findSubordinates(res.filterCondition, this.data as Staff[]);
+          this.data = findSubordinates(
+            res.filterCondition,
+            this.data as Staff[],
+          );
         if (res.breadType === 'region')
-          this.data = this.data.filter((item) => res.filterCondition === item.region);
+          this.data = this.data.filter(
+            (item) => res.filterCondition === item.region,
+          );
       }
       console.log(res, 'url');
     });
@@ -72,7 +81,10 @@ export class TableContainerComponent implements OnInit {
   getStaff() {
     this.api.getStaff().subscribe((res) => {
       const staffList = res.map((e) => e.userName);
-      res.forEach((element) => (element.isValid = staffList.includes(element.SuperiorNumber)));
+      res.forEach(
+        (element) =>
+          (element.isValid = staffList.includes(element.SuperiorNumber)),
+      );
       this.setTableData(res);
     });
   }
