@@ -1,63 +1,63 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  TemplateRef,
+  SimpleChanges,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { Router, ActivatedRoute } from '@angular/router';
-import { ILocation, Region, Staff } from '../api.service';
+import { ILocation, IRegion, Staff } from '../api.service';
 import { Breadcrumb } from '../components/navigation.component';
 import { RouterChangeHandlerService } from '../router-change-handler.service';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
+import { Col, ColNameNameSpace } from './table-container.component';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-table',
   standalone: true,
   imports: [CommonModule, MatTableModule, MatButtonModule],
-  template: ` <mat-table [dataSource]="dataSource" class="w-full">
-    <!-- Position Column -->
-    <ng-container [matColumnDef]="column.col" *ngFor="let column of Columns">
-      <th mat-header-cell *matHeaderCellDef>{{ column.colName }}</th>
-      <td mat-cell *matCellDef="let element">
-        <div [ngSwitch]="column.col">
-          <ng-container *ngSwitchCase="'action'">
-            <button mat-raised-button (click)="goLocation(element)">
-              區域
-            </button>
-            <button mat-raised-button (click)="gogo(element)">人員</button>
-          </ng-container>
-          <ng-container *ngSwitchCase="'isValid'">
-            <button
-              mat-raised-button
-              (click)="gogo(element)"
-              *ngIf="element['SuperiorNumber']"
-            >
-              轄下
-            </button>
-          </ng-container>
-          <ng-container *ngSwitchDefault>{{
-            element[column.col]
-          }}</ng-container>
-        </div>
-      </td>
-    </ng-container>
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </mat-table>`,
+  template: `
+    <mat-table [dataSource]="dataSource" class="w-full">
+      <!-- Position Column -->
+      <ng-container [matColumnDef]="column.col" *ngFor="let column of columns">
+        <th mat-header-cell *matHeaderCellDef>{{ column.colName }}</th>
+        <td mat-cell *matCellDef="let element">
+          <div [ngSwitch]="column.col">
+            <ng-container *ngSwitchCase="'action'">
+              <ng-container
+                *ngTemplateOutlet="
+                  actionColumnTemplate;
+                  context: { $implicit: element }
+                "
+              >
+              </ng-container>
+            </ng-container>
+
+            <ng-container *ngSwitchDefault>{{
+              element[column.col]
+            }}</ng-container>
+          </div>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </mat-table>
+  `,
   styles: [],
 })
-export class TableComponent implements OnInit {
-  @Input() Columns!: ColumnVM[];
-  _dataSource: MatTableDataSource<unknown> = new MatTableDataSource();
+export class TableComponent {
+  @Input() data: T[] = [];
+  @Input() actionColumnTemplate!: TemplateRef<unknown>;
+  @Input() columns: ColumnVM[] = [];
 
   displayedColumns!: string[];
 
-  @Input() set data(data: T[]) {
-    this._dataSource.data = data;
-  }
-
-  get dataSource() {
-    return this._dataSource;
-  }
-
-  @Output() go = new EventEmitter<unknown>();
+  dataSource: MatTableDataSource<T> = new MatTableDataSource<T>([]);
 
   constructor(
     private router: Router,
@@ -65,11 +65,18 @@ export class TableComponent implements OnInit {
     private routerChangeHandlerService: RouterChangeHandlerService,
   ) {}
 
-  ngOnInit() {
-    this.displayedColumns = this.Columns.map((item) => item.col);
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['data']) {
+      this.dataSource = new MatTableDataSource<T>(this.data);
+    }
+    if (changes['columns']) {
+      this.displayedColumns = this.columns.map((c) => c.col);
+    }
   }
 
-  /** 導航員工列表 */
+  /** 導航員工列表
+   *廢棄
+   */
   gogo(row: T) {
     console.log(row);
     const breadcrumb = {} as Breadcrumb;
@@ -106,4 +113,4 @@ export interface ColumnVM {
   colName: string;
 }
 
-export type T = Region | Staff;
+export type T = IRegion | Staff;

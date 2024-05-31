@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of, tap } from 'rxjs';
+import { Observable, map, of, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -10,18 +10,18 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  getRegion(): Observable<Region[]> {
+  getRegion(): Observable<IRegion[]> {
     return of([
       {
         id: 1,
         region: '北部',
         createDate: '2001-01-01',
       },
-      {
-        id: 2,
-        region: '中部',
-        createDate: '2002-01-01',
-      },
+      // {
+      //   id: 2,
+      //   region: "中部",
+      //   createDate: "2002-01-01"
+      // },
       {
         id: 3,
         region: '南部',
@@ -41,7 +41,7 @@ export class ApiService {
         id: '5',
         location: '宜蘭',
         locationNumber: '900',
-        region: '東區',
+        region: '東部',
         address: '宜蘭縣宜蘭路',
         isValid: true,
         phone: '06-00000000',
@@ -51,7 +51,7 @@ export class ApiService {
         id: '6',
         location: '花蓮',
         locationNumber: '1000',
-        region: '東區',
+        region: '東部',
         address: '花蓮縣花蓮鄉花蓮路',
         isValid: true,
         phone: '07-0000000',
@@ -61,8 +61,8 @@ export class ApiService {
         id: '12',
         location: '新北',
         locationNumber: '1600',
-        region: '北區',
-        address: '新北市新北區新北路',
+        region: '北部',
+        address: '新北市新北路',
         isValid: true,
         phone: '02-0000000',
         createDate: '1/1/2004',
@@ -71,7 +71,7 @@ export class ApiService {
         id: '13',
         location: '新竹',
         locationNumber: '1700',
-        region: '北區',
+        region: '北部',
         address: '新竹市新竹區新竹路',
         isValid: true,
         phone: '03-43213333',
@@ -81,7 +81,7 @@ export class ApiService {
         id: '18',
         location: '台南',
         locationNumber: '2200',
-        region: '南區',
+        region: '南部',
         address: '台南市官田區官田路',
         isValid: true,
         phone: '06-5555555',
@@ -91,7 +91,7 @@ export class ApiService {
         id: '19',
         location: '高雄',
         locationNumber: '2300',
-        region: '南區',
+        region: '南部',
         address: '高雄市七賢路',
         isValid: true,
         phone: '07-1112444',
@@ -100,14 +100,24 @@ export class ApiService {
     ]);
   }
 
-  getStaff(): Observable<Staff[]> {
+  /** 區域人員列表 */
+  postUserAddressBook(region: string): Observable<Staff[]> {
+    return this.getFieldStaff().pipe(
+      map((data) => {
+        console.log(data);
+        return data.filter((data) => data.region === region);
+      }),
+    );
+  }
+  /**組織人員資料 */
+  getFieldStaff(): Observable<Staff[]> {
     return of([
       {
         id: 1,
         userName: '戰車',
         userId: 'WM616',
         locationNumber: '900',
-        region: '東區',
+        region: '東部',
         location: '宜蘭縣宜蘭路',
         gender: '女',
         phone: '968836117',
@@ -121,7 +131,7 @@ export class ApiService {
         userName: '白起',
         userId: 'AQ467',
         locationNumber: '900',
-        region: '東區',
+        region: '東部',
         location: '宜蘭縣宜蘭路',
         gender: '男',
         phone: '944583424',
@@ -135,7 +145,7 @@ export class ApiService {
         userName: '許墨',
         userId: 'BF0467',
         locationNumber: '900',
-        region: '東區',
+        region: '東部',
         location: '宜蘭縣宜蘭路',
         gender: '男',
         phone: '958439141',
@@ -149,7 +159,7 @@ export class ApiService {
         userName: '宿儺',
         userId: 'XV693',
         locationNumber: '1000',
-        region: '東區',
+        region: '東部',
         location: '花蓮縣花蓮鄉花蓮路',
         gender: '女',
         phone: '935699074',
@@ -163,7 +173,7 @@ export class ApiService {
         userName: '虎杖',
         userId: 'BF0468',
         locationNumber: '1000',
-        region: '東區',
+        region: '東部',
         location: '花蓮縣花蓮鄉花蓮路',
         gender: '男',
         phone: '9123456789',
@@ -177,8 +187,8 @@ export class ApiService {
         userName: '五條',
         userId: 'XV694',
         locationNumber: '1600',
-        region: '北區',
-        location: '新北市新北區新北路',
+        region: '北部',
+        location: '新北市新北路',
         gender: '男',
         phone: '9234567890',
         jobName: '業務員',
@@ -191,8 +201,8 @@ export class ApiService {
         userName: '釘琪',
         userId: 'BF0469',
         locationNumber: '1600',
-        region: '北區',
-        location: '新北市新北區新北路',
+        region: '北部',
+        location: '新北市新北路',
         gender: '女',
         phone: '9345678991',
         jobName: '業務員',
@@ -205,8 +215,8 @@ export class ApiService {
         userName: '伏黑',
         userId: 'XV695',
         locationNumber: '1600',
-        region: '北區',
-        location: '新北市新北區新北路',
+        region: '北部',
+        location: '新北市新北路',
         gender: '男',
         phone: '9456790092',
         jobName: '區經理',
@@ -219,7 +229,7 @@ export class ApiService {
         userName: '娜娜明',
         userId: 'BF0470',
         locationNumber: '1700',
-        region: '北區',
+        region: '北部',
         location: '新竹市新竹區新竹路',
         gender: '男',
         phone: '9567901193',
@@ -233,7 +243,7 @@ export class ApiService {
         userName: '火山頭',
         userId: 'XV696',
         locationNumber: '1700',
-        region: '北區',
+        region: '北部',
         location: '新竹市新竹區新竹路',
         gender: '男',
         phone: '9679012294',
@@ -247,7 +257,7 @@ export class ApiService {
         userName: '九十九由基',
         userId: 'BF0471',
         locationNumber: '1700',
-        region: '北區',
+        region: '北部',
         location: '新竹市新竹區新竹路',
         gender: '女',
         phone: '9790123395',
@@ -261,7 +271,7 @@ export class ApiService {
         userName: '夏由傑',
         userId: 'XV697',
         locationNumber: '2200',
-        region: '南區',
+        region: '南部',
         location: '台南市官田區官田路',
         gender: '男',
         phone: '9901234496',
@@ -275,7 +285,7 @@ export class ApiService {
         userName: '新世紀福音戰士',
         userId: 'BF0472',
         locationNumber: '2200',
-        region: '南區',
+        region: '南部',
         location: '台南市官田區官田路',
         gender: '男',
         phone: '9012345597',
@@ -289,7 +299,7 @@ export class ApiService {
         userName: 'Mike',
         userId: 'XV698',
         locationNumber: '2300',
-        region: '南區',
+        region: '南部',
         location: '高雄市七賢路',
         gender: '男',
         phone: '9123456698',
@@ -303,7 +313,7 @@ export class ApiService {
         userName: 'Tina',
         userId: 'BF0473',
         locationNumber: '2300',
-        region: '南區',
+        region: '南部',
         location: '高雄市七賢路',
         gender: '女',
         phone: '9234567799',
@@ -317,7 +327,7 @@ export class ApiService {
         userName: 'Andy',
         userId: 'XV699',
         locationNumber: '2300',
-        region: '南區',
+        region: '南部',
         location: '高雄市七賢路',
         gender: '男',
         phone: '9345678900',
@@ -331,7 +341,7 @@ export class ApiService {
         userName: 'Daisy',
         userId: 'BF0474',
         locationNumber: '2300',
-        region: '南區',
+        region: '南部',
         location: '高雄市七賢路',
         gender: '女',
         phone: '9456790001',
@@ -345,7 +355,7 @@ export class ApiService {
         userName: '傑尼夫',
         userId: 'XV700',
         locationNumber: '2300',
-        region: '南區',
+        region: '南部',
         location: '高雄市七賢路',
         gender: '女',
         phone: '9456723466',
@@ -354,16 +364,18 @@ export class ApiService {
         isValid: true,
         SuperiorNumber: 'XV699',
       },
-    ]).pipe(tap((res) => console.log(res)));
+    ]);
   }
 }
 
-export interface Region {
+/** 區域 */
+export interface IRegion {
   id: number;
   region: string;
   createDate: string;
 }
 
+/** 組織人員 */
 export interface Staff {
   id: number;
   userName: string;

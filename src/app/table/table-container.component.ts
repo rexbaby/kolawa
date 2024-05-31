@@ -1,113 +1,143 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { CommonModule, NgIf } from '@angular/common';
+import {
+  ChangeDetectorRef,
+  Component,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { ApiService, Staff } from '../api.service';
+import { RouterModule, Router, Route } from '@angular/router';
+import { ApiService, IRegion } from '../api.service';
 import { Breadcrumb } from '../components/navigation.component';
-import { RouterChangeHandlerService } from '../router-change-handler.service';
 import { TableComponent, T, ColumnVM } from './table.component';
-
+import { Observable, of } from 'rxjs';
+import { NevigationService } from '../nevigation.service';
 @Component({
   selector: 'app-table-container',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, TableComponent],
-  template: ` <div class="bg-yellow-400 m-2">
-    <app-table [data]="data" [Columns]="Columns" (gogo)="go()"></app-table>page
-    : {{ page }} data :
-  </div>`,
+  imports: [CommonModule, RouterModule, MatButtonModule, TableComponent, NgIf],
+  template: `
+    <div class="bg-yellow-400 m-2" *ngIf="data && actionColumnTemplate">
+      <app-table
+        [data]="data"
+        [columns]="columns"
+        [actionColumnTemplate]="actionColumnTemplate"
+      ></app-table>
+      page : {{ page }} data :
+    </div>
+
+    <ng-template #tempAddressBook let-element>
+      <button class="bg-blue-200" (click)="goRegionAddressBook(element)">
+        區域人員
+      </button>
+      <button class="bg-blue-200" (click)="goRegionUserList(element)">
+        人員列表
+      </button>
+    </ng-template>
+
+    <ng-template #tempFieldStaff let-element>
+      <div class="bg-blue-200">組織人員按鈕</div>
+    </ng-template>
+  `,
   styles: [],
 })
-export class TableContainerComponent implements OnInit {
+export class TableContainerComponent {
+  @ViewChild('actionColumnTemplate')
+  actionColumnTemplate!: TemplateRef<unknown>;
+  @ViewChild('tempFieldStaff', { static: false, read: TemplateRef })
+  tempFieldStaff!: TemplateRef<unknown>;
+  @ViewChild('tempAddressBook', { static: false, read: TemplateRef })
+  tempAddressBook!: TemplateRef<unknown>;
+
   page = 1;
-  data: T[] = [];
+  data!: T[];
   routeList: Breadcrumb[] = [];
-  Columns!: ColumnVM[];
+  columns!: ColumnVM[];
+  position = '';
+  queryParams: unknown;
 
   constructor(
-    private activatedRoute: ActivatedRoute,
     private api: ApiService,
     private router: Router,
-    private routerChangeHandlerService: RouterChangeHandlerService,
+    private navigationService: NevigationService,
+    private cdr: ChangeDetectorRef,
   ) {
-    this.page = this.activatedRoute.snapshot.params['page'] || 1;
-    this.routerChangeHandlerService.routerChangeRouterList.subscribe((res) => {
-      if (Array.isArray(res)) {
-        this.routeList = res;
-      } else if ('breadType' in res) {
-        this.routeList.push(res);
-        console.log('麵包穴');
-
-        console.log(`路由切換${res}`);
-
-        // eslint-disable-next-line no-inner-declarations
-        function findSubordinates(superior: string, list: Staff[]) {
-          const subordinates = list.filter(
-            (item) => item.SuperiorNumber === superior,
-          );
-          let allSubordinates = [...subordinates];
-
-          subordinates.forEach((element) => {
-            allSubordinates = allSubordinates.concat(
-              findSubordinates(element.userId, list),
-            );
-          });
-          return subordinates;
-        }
-        if (res.breadType === 'staff')
-          this.data = findSubordinates(
-            res.filterCondition,
-            this.data as Staff[],
-          );
-        if (res.breadType === 'region')
-          this.data = this.data.filter(
-            (item) => res.filterCondition === item.region,
-          );
-      }
-      console.log(res, 'url');
-    });
+    this.position = this.router.routerState.snapshot.url
+      .split('/')
+      .slice(-1)[0];
   }
 
-  ngOnInit(): void {
-    switch (this.routeList[1].name) {
-      case 'fieldStaff':
-        this.getStaff();
-        return;
+  ngAfterViewInit(): void {
+    this.reload();
+  }
+
+  reload(): void {
+    switch (this.position) {
       case 'addressBook':
         this.getRegion();
+        return;
+      case 'fieldStaff':
+        this.getFieldStaff();
         return;
     }
   }
 
-  getStaff() {
-    this.api.getStaff().subscribe((res) => {
-      const staffList = res.map((e) => e.userName);
-      res.forEach(
-        (element) =>
-          (element.isValid = staffList.includes(element.SuperiorNumber)),
-      );
+  getFieldStaff() {
+    this.api.getFieldStaff().subscribe((res) => {
       this.setTableData(res);
+      this.cdr.detach();
+      this.actionColumnTemplate = this.tempFieldStaff;
+      this.cdr.detectChanges();
     });
   }
 
   getRegion() {
     this.api.getRegion().subscribe((res) => {
       this.setTableData(res);
+      this.actionColumnTemplate = this.tempAddressBook;
+      this.cdr.detectChanges();
+    });
+  }
+
+  /**區域查看 */
+  goRegionAddressBook(rowData: IRegion) {
+    this.router.navigate(['home', 'addressBook'], {
+      queryParams: { region: rowData.region },
+    });
+    this.navigationService.addBread({ region: rowData.region });
+
+    this.api.postUserAddressBook(rowData.region).subscribe((res) => {
+      console.log(res);
+      this.setTableData(res);
+      this.actionColumnTemplate = this.tempAddressBook;
+      this.cdr.detectChanges();
+    });
+  }
+
+  /** 區域人員列表 */
+  goRegionUserList(rowData: IRegion) {
+    this.router.navigate(['home', 'region'], {
+      queryParams: { region: rowData.region },
     });
   }
 
   setTableData(data: T[]) {
-    this.data = data;
-    const list = Object.entries(data[0]);
-
-    this.Columns = list.map((item) => ({
-      col: item[0],
-      colName: ColName.colName[item[0] as Col],
+    if (data.length === 0) {
+      window.alert('空字串');
+      return;
+    }
+    const list = Object.keys(data[0]).map((item) => ({
+      col: item,
+      colName: ColNameNameSpace.colName[item as Col],
     }));
+    list.push({ col: 'action', colName: '動作' });
 
-    this.Columns.push({ col: 'action', colName: '動作' });
+    this.columns = list;
+    console.log(this.columns);
+
+    this.data = data;
+    this.cdr.detectChanges(); // Add this line
   }
-
-  go() {}
 }
 
 export enum Col {
@@ -129,7 +159,7 @@ export type ColNameType = {
   [key in Col]: string;
 };
 // eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace ColName {
+export namespace ColNameNameSpace {
   export const colName: ColNameType = {
     id: '編號',
     createDate: '創建日期',
@@ -144,4 +174,7 @@ export namespace ColName {
     isValid: '狀態',
     SuperiorNumber: '操作',
   };
+}
+function mpa(arg0: (data: any) => boolean): any {
+  throw new Error('Function not implemented.');
 }

@@ -1,3 +1,4 @@
+import { NevigationService } from './../nevigation.service';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -20,14 +21,18 @@ interface Bread {
   standalone: true,
   imports: [CommonModule, RouterModule],
   template: `
+    {{ breadcrumbs }}
     <ol class="breadcrumb">
       <li *ngFor="let item of breadcrumbs">
-        <a
-          [routerLink]="[item.url]"
-          [queryParams]="item.params"
-          routerLinkActive="router-link-active"
-          >{{ item.label }}</a
+        <button
+          class="p-1 bg-lime-400 m-1"
+          (click)="go(item)"
+          (keyup)="go(item)"
         >
+          {{ item.label }} | {{ item.params }}
+        </button>
+        <br />
+        {{ item.url }}
       </li>
     </ol>
   `,
@@ -51,15 +56,29 @@ interface Bread {
 export class BreadcrumbComponent implements OnInit {
   breadcrumbs: Bread[] = [];
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
-
-  ngOnInit(): void {
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private navigationService: NevigationService,
+  ) {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
+      .subscribe((end) => {
+        console.log('end', end);
         this.breadcrumbs = this.createBreadcrumbs(this.route.root);
+        this.breadcrumbs.unshift({ url: '/', label: '組織' });
+        console.log(end);
       });
+    // console.log('reset')
+    // this.navigationService.bread$.subscribe((params:any) => {
+    //   console.log(params)
+    //   this.breadcrumbs.push({ url: this.router.url, label: this.router.url,params:params })
+    //   console.log(this.breadcrumbs)
+    // })
   }
+  // "/home/addressBook?region=%E5%8C%97%E9%83%A8"
+
+  ngOnInit(): void {}
 
   createBreadcrumbs(
     route: ActivatedRoute,
@@ -77,7 +96,7 @@ export class BreadcrumbComponent implements OnInit {
         .map((segment) => segment.path)
         .join('/');
       const label = child.snapshot.data['breadcrumb'] || '';
-      const params = child.snapshot.queryParams;
+      const params = child.snapshot;
 
       if (routeURL && label) {
         breadcrumbs.push({
@@ -87,9 +106,30 @@ export class BreadcrumbComponent implements OnInit {
         });
       }
 
+      if (routeURL && label && params) {
+        breadcrumbs.push({
+          label,
+          url: `${url}/${routeURL}`,
+          params,
+        });
+      }
+
       return this.createBreadcrumbs(child, `${url}/${routeURL}`, breadcrumbs);
     }
+
     return breadcrumbs;
+  }
+
+  go(item: Bread) {
+    const { params } = item;
+    const paramsStr = params
+      ? Object.keys(params)
+          .map((key) => `${key}=${params[key]}`)
+          .join('&')
+      : '';
+    this.router.navigateByUrl(`/home/${item.url}${paramsStr}`, {
+      onSameUrlNavigation: 'reload',
+    });
   }
 }
 

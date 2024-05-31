@@ -27,7 +27,6 @@ export class RouterChangeHandlerService {
               filterCondition: Object.entries(param).toString(),
             }));
 
-          console.log(breadcrumb);
           this.routerChangeRouterList.next(breadcrumb);
         });
     });
