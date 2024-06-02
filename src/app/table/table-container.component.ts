@@ -6,11 +6,18 @@ import {
   ViewChild,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterModule, Router, Route, ActivatedRoute } from '@angular/router';
+import {
+  RouterModule,
+  Router,
+  Route,
+  ActivatedRoute,
+  NavigationStart,
+  ActivationEnd,
+} from '@angular/router';
 import { ApiService, IRegion } from '../api.service';
 import { Breadcrumb } from '../components/navigation.component';
 import { TableComponent, T, ColumnVM } from './table.component';
-import { Observable, Subject, Subscription, of, take, tap } from 'rxjs';
+import { Observable, Subject, Subscription, filter, of, take, tap } from 'rxjs';
 import { NavigationService } from '../navigation.service';
 @Component({
   selector: 'app-table-container',
@@ -77,8 +84,14 @@ export class TableContainerComponent {
     private navigationService: NavigationService,
     private route: ActivatedRoute,
   ) {
-    this.route.queryParams.subscribe((queryParams) => {
-      this.queryParams = queryParams;
+    this.router.events
+      .pipe(filter((res): res is ActivationEnd => res instanceof ActivationEnd))
+      .subscribe((res) => {
+        this.queryParams = res.snapshot.queryParams;
+      });
+
+    this.route.queryParams.subscribe((res) => {
+      this.queryParams = res;
     });
   }
 
@@ -87,9 +100,6 @@ export class TableContainerComponent {
       .getBread()
       .pipe()
       .subscribe((res: string) => {
-        //subscribe ??//TODO:還沒有更新queryParams
-        console.log('queryParams', this.queryParams);
-
         this.reload(res);
       });
   }
@@ -104,11 +114,14 @@ export class TableContainerComponent {
     switch (res) {
       case 'home':
       case 'addressBook':
-        console.log(this.queryParams);
+        this.getRegion();
+        return;
+      case 'region':
         if (this.queryParams['region']) {
           this.goRegionAddressBook();
         }
-        this.getRegion();
+        console.error('queryParams region is undefined');
+
         return;
       case 'fieldStaff':
         this.getFieldStaff();
