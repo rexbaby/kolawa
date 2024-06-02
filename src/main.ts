@@ -23,7 +23,7 @@ bootstrapApplication(AppComponent, {
       ROUTES,
       withRouterConfig({
         paramsInheritanceStrategy: 'always',
-        onSameUrlNavigation: 'reload',
+        // onSameUrlNavigation: 'reload',
       }),
     ),
   ],

@@ -104,7 +104,6 @@ export class ApiService {
   postUserAddressBook(region: string): Observable<Staff[]> {
     return this.getFieldStaff().pipe(
       map((data) => {
-        console.log(data);
         return data.filter((data) => data.region === region);
       }),
     );

@@ -65,7 +65,6 @@ export class LoginComponent {
     const { loginId, password } = this.form.value;
 
     this.auth.getUserByEmail(loginId as string).subscribe((res) => {
-      console.log(res, 'rees');
       if (res) {
         this.router.navigate([`home`]);
         sessionStorage.setItem('loginUser', String(res));

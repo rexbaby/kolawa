@@ -6,12 +6,12 @@ import {
   ViewChild,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterModule, Router, Route } from '@angular/router';
+import { RouterModule, Router, Route, ActivatedRoute } from '@angular/router';
 import { ApiService, IRegion } from '../api.service';
 import { Breadcrumb } from '../components/navigation.component';
 import { TableComponent, T, ColumnVM } from './table.component';
-import { Observable, of } from 'rxjs';
-import { NevigationService } from '../nevigation.service';
+import { Observable, Subject, Subscription, of, take, tap } from 'rxjs';
+import { NavigationService } from '../navigation.service';
 @Component({
   selector: 'app-table-container',
   standalone: true,
@@ -27,10 +27,10 @@ import { NevigationService } from '../nevigation.service';
     </div>
 
     <ng-template #tempAddressBook let-element>
-      <button class="bg-blue-200" (click)="goRegionAddressBook(element)">
-        區域人員
+      <button class="btn-primary" (click)="goRegionUserList(element)">
+        區域查看
       </button>
-      <button class="bg-blue-200" (click)="goRegionUserList(element)">
+      <button class="btn-primary" (click)="routerChangeTo(element)">
         人員列表
       </button>
     </ng-template>
@@ -38,8 +38,19 @@ import { NevigationService } from '../nevigation.service';
     <ng-template #tempFieldStaff let-element>
       <div class="bg-blue-200">組織人員按鈕</div>
     </ng-template>
+
+    <ng-template #tempUnderJurisdiction let-element>
+      <div class="bg-blue-200">轄下</div>
+    </ng-template>
   `,
-  styles: [],
+
+  styles: [
+    `
+      .btn-primary {
+        @apply py-2 px-5 bg-violet-500 text-white font-semibold rounded-full shadow-md hover:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-400 focus:ring-opacity-75;
+      }
+    `,
+  ],
 })
 export class TableContainerComponent {
   @ViewChild('actionColumnTemplate')
@@ -48,32 +59,55 @@ export class TableContainerComponent {
   tempFieldStaff!: TemplateRef<unknown>;
   @ViewChild('tempAddressBook', { static: false, read: TemplateRef })
   tempAddressBook!: TemplateRef<unknown>;
+  @ViewChild('tempUnderJurisdiction', { static: false, read: TemplateRef })
+  tempUnderJurisdiction!: TemplateRef<unknown>;
 
   page = 1;
   data!: T[];
   routeList: Breadcrumb[] = [];
   columns!: ColumnVM[];
   position = '';
-  queryParams: unknown;
-
+  queryParams: { [key: string]: string } = {};
+  params: unknown;
+  navigationEvent!: Subscription;
   constructor(
     private api: ApiService,
     private router: Router,
-    private navigationService: NevigationService,
     private cdr: ChangeDetectorRef,
+    private navigationService: NavigationService,
+    private route: ActivatedRoute,
   ) {
-    this.position = this.router.routerState.snapshot.url
-      .split('/')
-      .slice(-1)[0];
+    this.route.queryParams.subscribe((queryParams) => {
+      this.queryParams = queryParams;
+    });
   }
 
-  ngAfterViewInit(): void {
-    this.reload();
+  ngOnInit(): void {
+    this.navigationEvent = this.navigationService
+      .getBread()
+      .pipe()
+      .subscribe((res: string) => {
+        //subscribe ??//TODO:還沒有更新queryParams
+        console.log('queryParams', this.queryParams);
+
+        this.reload(res);
+      });
   }
 
-  reload(): void {
-    switch (this.position) {
+  ngOnDestroy(): void {
+    if (this.navigationEvent) {
+      this.navigationEvent.unsubscribe();
+    }
+  }
+
+  reload(res: string): void {
+    switch (res) {
+      case 'home':
       case 'addressBook':
+        console.log(this.queryParams);
+        if (this.queryParams['region']) {
+          this.goRegionAddressBook();
+        }
         this.getRegion();
         return;
       case 'fieldStaff':
@@ -85,7 +119,6 @@ export class TableContainerComponent {
   getFieldStaff() {
     this.api.getFieldStaff().subscribe((res) => {
       this.setTableData(res);
-      this.cdr.detach();
       this.actionColumnTemplate = this.tempFieldStaff;
       this.cdr.detectChanges();
     });
@@ -99,22 +132,24 @@ export class TableContainerComponent {
     });
   }
 
-  /**區域查看 */
-  goRegionAddressBook(rowData: IRegion) {
+  /**區域人員列表 */
+  goRegionAddressBook() {
+    this.api
+      .postUserAddressBook(this.queryParams['region'])
+      .subscribe((res) => {
+        this.setTableData(res);
+        this.actionColumnTemplate = this.tempUnderJurisdiction;
+        this.cdr.detectChanges();
+      });
+  }
+
+  routerChangeTo(rowData: IRegion) {
     this.router.navigate(['home', 'addressBook'], {
       queryParams: { region: rowData.region },
     });
-    this.navigationService.addBread({ region: rowData.region });
-
-    this.api.postUserAddressBook(rowData.region).subscribe((res) => {
-      console.log(res);
-      this.setTableData(res);
-      this.actionColumnTemplate = this.tempAddressBook;
-      this.cdr.detectChanges();
-    });
   }
 
-  /** 區域人員列表 */
+  /** 區域查看 */
   goRegionUserList(rowData: IRegion) {
     this.router.navigate(['home', 'region'], {
       queryParams: { region: rowData.region },
@@ -133,10 +168,9 @@ export class TableContainerComponent {
     list.push({ col: 'action', colName: '動作' });
 
     this.columns = list;
-    console.log(this.columns);
 
     this.data = data;
-    this.cdr.detectChanges(); // Add this line
+    this.cdr.detectChanges();
   }
 }
 

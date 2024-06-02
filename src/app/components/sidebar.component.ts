@@ -1,3 +1,4 @@
+import { NavigationService } from './../navigation.service';
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -32,6 +33,6 @@ export class SidebarComponent {
   router = inject(Router);
 
   go(str: string) {
-    this.router.navigateByUrl(`/home/${str}`);
+    this.router.navigateByUrl(`/home/${str}`, {});
   }
 }
