@@ -72,7 +72,7 @@
         "jobName": "Field Technician",
         "arrivalDate": "2023-11-07",
         "isValid": true,
-        "SuperiorNumber": "Mary Johnson"
+        "superiorNumber": "Mary Johnson"
       },
       {
         "id": 2,
@@ -85,7 +85,7 @@
         "jobName": "Field Engineer",
         "arrivalDate": "2023-11-07",
         "isValid": true,
-        "SuperiorNumber": "David Williams"
+        "superiorNumber": "David Williams"
       },
       {
         "id": 3,
@@ -98,7 +98,7 @@
         "jobName": "Field Inspector",
         "arrivalDate": "2023-11-07",
         "isValid": true,
-        "SuperiorNumber": "Karen Davis"
+        "superiorNumber": "Karen Davis"
       },
       {
         "id": 4,
@@ -111,7 +111,7 @@
         "jobName": "Field Supervisor",
         "arrivalDate": "2023-11-07",
         "isValid": true,
-        "SuperiorNumber": "Daniel Miller"
+        "superiorNumber": "Daniel Miller"
       },
       {
         "id": 5,
@@ -124,7 +124,7 @@
         "jobName": "Regional Manager",
         "arrivalDate": "2023-11-08",
         "isValid": true,
-        "SuperiorNumber": "John Smith"
+        "superiorNumber": "John Smith"
       },
       {
         "id": 6,
@@ -137,7 +137,7 @@
         "jobName": "Logistics Coordinator",
         "arrivalDate": "2023-11-08",
         "isValid": true,
-        "SuperiorNumber": "Alice Johnson"
+        "superiorNumber": "Alice Johnson"
       },
       {
         "id": 7,
@@ -150,7 +150,7 @@
         "jobName": "Quality Control Specialist",
         "arrivalDate": "2023-11-08",
         "isValid": true,
-        "SuperiorNumber": "Michael Brown"
+        "superiorNumber": "Michael Brown"
       },
       {
         "id": 8,
@@ -163,7 +163,7 @@
         "jobName": "Operations Director",
         "arrivalDate": "2023-11-08",
         "isValid": true,
-        "SuperiorNumber": "Emily Davis"
+        "superiorNumber": "Emily Davis"
       }
     ]
   ]

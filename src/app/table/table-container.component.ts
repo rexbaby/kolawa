@@ -14,17 +14,26 @@ import {
   NavigationStart,
   ActivationEnd,
 } from '@angular/router';
-import { ApiService, IRegion } from '../api.service';
+import { ApiService, IRegion, Staff } from '../api.service';
 import { Breadcrumb } from '../components/navigation.component';
 import { TableComponent, T, ColumnVM } from './table.component';
-import { Observable, Subject, Subscription, filter, of, take, tap } from 'rxjs';
+import {
+  Observable,
+  Subject,
+  Subscription,
+  filter,
+  map,
+  of,
+  take,
+  tap,
+} from 'rxjs';
 import { NavigationService } from '../navigation.service';
 @Component({
   selector: 'app-table-container',
   standalone: true,
   imports: [CommonModule, RouterModule, MatButtonModule, TableComponent, NgIf],
   template: `
-    <div class="bg-yellow-400 m-2" *ngIf="data && actionColumnTemplate">
+    <div class="bg-yellow-400 m-2" *ngIf="data">
       <app-table
         [data]="data"
         [columns]="columns"
@@ -43,11 +52,13 @@ import { NavigationService } from '../navigation.service';
     </ng-template>
 
     <ng-template #tempFieldStaff let-element>
-      <div class="bg-blue-200">組織人員按鈕</div>
+      <button class="btn-primary" (click)="editMember(element)">編輯</button>
+      <button class="btn-primary" (click)="subordinate(element)">轄下</button>
     </ng-template>
 
     <ng-template #tempUnderJurisdiction let-element>
-      <div class="bg-blue-200">轄下</div>
+      <button class="btn-primary" (click)="editMember(element)">編輯</button>
+      <button class="btn-primary" (click)="subordinate(element)">轄下</button>
     </ng-template>
   `,
 
@@ -111,6 +122,8 @@ export class TableContainerComponent {
   }
 
   reload(res: string): void {
+    this.actionColumnTemplate = this.tempAddressBook;
+
     switch (res) {
       case 'home':
       case 'addressBook':
@@ -185,6 +198,31 @@ export class TableContainerComponent {
     this.data = data;
     this.cdr.detectChanges();
   }
+  /**編輯 */
+  editMember(_t16: any) {}
+  /**轄下 */
+  subordinate(item: Staff) {
+    const id = item.userId;
+    const api$ = this.queryParams['region']
+      ? this.api.postUserAddressBook(this.queryParams['region'])
+      : this.api.getFieldStaff();
+
+    api$
+      .pipe(
+        map((res) => {
+          const a = res.filter((item) => item.superiorNumber === id);
+          return a;
+        }),
+      )
+      .subscribe((res) => {
+        if (res.length === 0) {
+          window.alert('沒有下屬');
+          return;
+        }
+        this.setTableData(res);
+        this.cdr.detectChanges();
+      });
+  }
 }
 
 export enum Col {
@@ -199,7 +237,7 @@ export enum Col {
   jobName = 'jobName',
   arrivalDate = 'arrivalDate',
   isValid = 'isValid',
-  SuperiorNumber = 'SuperiorNumber',
+  superiorNumber = 'superiorNumber',
 }
 
 export type ColNameType = {
@@ -219,9 +257,6 @@ export namespace ColNameNameSpace {
     jobName: '職稱',
     arrivalDate: '入值日期',
     isValid: '狀態',
-    SuperiorNumber: '操作',
+    superiorNumber: '上級Id',
   };
-}
-function mpa(arg0: (data: any) => boolean): any {
-  throw new Error('Function not implemented.');
 }

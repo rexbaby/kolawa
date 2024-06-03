@@ -123,7 +123,7 @@ export class ApiService {
         jobName: '業務員',
         arrivalDate: '9/6/2022',
         isValid: true,
-        SuperiorNumber: 'XV693',
+        superiorNumber: 'XV693',
       },
       {
         id: 2,
@@ -137,7 +137,7 @@ export class ApiService {
         jobName: '業務員',
         arrivalDate: '6/16/2022',
         isValid: true,
-        SuperiorNumber: 'XV693',
+        superiorNumber: 'XV693',
       },
       {
         id: 3,
@@ -151,7 +151,7 @@ export class ApiService {
         jobName: '業務員',
         arrivalDate: '6/16/2022',
         isValid: true,
-        SuperiorNumber: 'XV693',
+        superiorNumber: 'XV693',
       },
       {
         id: 4,
@@ -165,7 +165,7 @@ export class ApiService {
         jobName: '區經理',
         arrivalDate: '7/15/2022',
         isValid: true,
-        SuperiorNumber: '',
+        superiorNumber: '',
       },
       {
         id: 5,
@@ -179,11 +179,11 @@ export class ApiService {
         jobName: '業務員',
         arrivalDate: '8/13/2022',
         isValid: true,
-        SuperiorNumber: 'XV695',
+        superiorNumber: 'XV695',
       },
       {
         id: 6,
-        userName: '五條',
+        userName: '伏黑',
         userId: 'XV694',
         locationNumber: '1600',
         region: '北部',
@@ -193,7 +193,7 @@ export class ApiService {
         jobName: '業務員',
         arrivalDate: '9/11/2022',
         isValid: true,
-        SuperiorNumber: 'XV695',
+        superiorNumber: 'XV695',
       },
       {
         id: 7,
@@ -207,11 +207,11 @@ export class ApiService {
         jobName: '業務員',
         arrivalDate: '10/10/2022',
         isValid: true,
-        SuperiorNumber: 'XV695',
+        superiorNumber: 'XV695',
       },
       {
         id: 8,
-        userName: '伏黑',
+        userName: '五條',
         userId: 'XV695',
         locationNumber: '1600',
         region: '北部',
@@ -221,7 +221,7 @@ export class ApiService {
         jobName: '區經理',
         arrivalDate: '11/8/2022',
         isValid: true,
-        SuperiorNumber: '',
+        superiorNumber: '',
       },
       {
         id: 9,
@@ -235,7 +235,7 @@ export class ApiService {
         jobName: '業務員',
         arrivalDate: '12/7/2022',
         isValid: true,
-        SuperiorNumber: 'XV696',
+        superiorNumber: 'XV696',
       },
       {
         id: 10,
@@ -249,7 +249,7 @@ export class ApiService {
         jobName: '業務員',
         arrivalDate: '1/5/2023',
         isValid: true,
-        SuperiorNumber: 'BF0471',
+        superiorNumber: 'BF0471',
       },
       {
         id: 11,
@@ -263,7 +263,7 @@ export class ApiService {
         jobName: '業務員',
         arrivalDate: '2/3/2023',
         isValid: true,
-        SuperiorNumber: '',
+        superiorNumber: '',
       },
       {
         id: 12,
@@ -277,7 +277,7 @@ export class ApiService {
         jobName: '區經理',
         arrivalDate: '3/4/2023',
         isValid: true,
-        SuperiorNumber: '',
+        superiorNumber: '',
       },
       {
         id: 13,
@@ -291,7 +291,7 @@ export class ApiService {
         jobName: '業務員',
         arrivalDate: '4/2/2023',
         isValid: true,
-        SuperiorNumber: 'XV697',
+        superiorNumber: 'XV697',
       },
       {
         id: 14,
@@ -305,7 +305,7 @@ export class ApiService {
         jobName: '業務員',
         arrivalDate: '5/1/2023',
         isValid: true,
-        SuperiorNumber: 'XV699',
+        superiorNumber: 'XV699',
       },
       {
         id: 15,
@@ -319,7 +319,7 @@ export class ApiService {
         jobName: '業務員',
         arrivalDate: '5/30/2023',
         isValid: true,
-        SuperiorNumber: 'XV698',
+        superiorNumber: 'XV698',
       },
       {
         id: 16,
@@ -333,7 +333,7 @@ export class ApiService {
         jobName: '區經理',
         arrivalDate: '6/28/2023',
         isValid: true,
-        SuperiorNumber: '',
+        superiorNumber: '',
       },
       {
         id: 17,
@@ -347,7 +347,7 @@ export class ApiService {
         jobName: '業務員',
         arrivalDate: '7/27/2023',
         isValid: true,
-        SuperiorNumber: 'BF0473',
+        superiorNumber: 'BF0473',
       },
       {
         id: 18,
@@ -361,7 +361,7 @@ export class ApiService {
         jobName: '業務員',
         arrivalDate: '8/25/2023',
         isValid: true,
-        SuperiorNumber: 'XV699',
+        superiorNumber: 'XV699',
       },
     ]);
   }
@@ -387,7 +387,7 @@ export interface Staff {
   jobName: string;
   arrivalDate: string;
   isValid: boolean;
-  SuperiorNumber: string;
+  superiorNumber: string;
 }
 
 export interface ILocation {

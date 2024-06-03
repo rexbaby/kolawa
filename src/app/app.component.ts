@@ -17,12 +17,11 @@ export class AppComponent {
 
   constructor() {
     sessionStorage.setItem('loginUser', '寫入一個沒有意義的文字假裝已經登入');
-    console.log(sessionStorage.getItem('loginUser'));
     this.router.navigate(['/home']);
     this.snacker.open(
       '歡迎使用 UmmTimeCard, 已經寫入一個沒有意義的文字假裝已經登入',
       '關閉',
-      { duration: 1000 },
+      { duration: 5000 },
     );
   }
 }
