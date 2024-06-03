@@ -17,5 +17,10 @@
   "editor.formatOnSave": true,
   "cSpell.words": [
     "Lcation"
-  ]
+  ],
+  "angular-schematics.schematicsDefaultOptions": {
+    "angular-*": {
+      "style": "scss"
+    }
+  }
 }

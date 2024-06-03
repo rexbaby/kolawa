@@ -29,16 +29,25 @@ import {
   tap,
 } from 'rxjs';
 import { NavigationService } from '../navigation.service';
+import { PermissionPipe } from '../shared/permission.pipe';
 @Component({
   selector: 'app-table-container',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, TableComponent, NgIf],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatButtonModule,
+    TableComponent,
+    NgIf,
+    PermissionPipe,
+  ],
   template: `
     <div class="bg-yellow-400 m-2" *ngIf="data">
       <app-table
         [data]="data"
         [columns]="columns"
         [actionColumnTemplate]="actionColumnTemplate"
+        [isValidColumnTemplate]="isValidColumnTemplate"
       ></app-table>
       page : {{ page }} data :
     </div>
@@ -64,6 +73,10 @@ import { NavigationService } from '../navigation.service';
       <button class="btn-primary" (click)="routerChangeToSubordinate(element)">
         轄下
       </button>
+    </ng-template>
+
+    <ng-template #isValidColumnTemplate let-element>
+      {{ element | permission }}
     </ng-template>
   `,
 

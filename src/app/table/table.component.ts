@@ -18,6 +18,15 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
         <th mat-header-cell *matHeaderCellDef>{{ column.colName }}</th>
         <td mat-cell *matCellDef="let element">
           <div [ngSwitch]="column.col">
+            <ng-container *ngSwitchCase="'isValid'">
+              <ng-container
+                *ngTemplateOutlet="
+                  isValidColumnTemplate;
+                  context: { $implicit: element }
+                "
+              >
+              </ng-container>
+            </ng-container>
             <ng-container *ngSwitchCase="'action'">
               <ng-container
                 *ngTemplateOutlet="
@@ -43,6 +52,7 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 export class TableComponent {
   @Input() data: T[] = [];
   @Input() actionColumnTemplate!: TemplateRef<unknown>;
+  @Input() isValidColumnTemplate!: TemplateRef<unknown>;
   @Input() columns: ColumnVM[] = [];
 
   displayedColumns!: string[];
