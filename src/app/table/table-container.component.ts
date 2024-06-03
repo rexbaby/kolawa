@@ -1,3 +1,4 @@
+import { query } from '@angular/animations';
 import { CommonModule, NgIf } from '@angular/common';
 import {
   ChangeDetectorRef,
@@ -53,12 +54,16 @@ import { NavigationService } from '../navigation.service';
 
     <ng-template #tempFieldStaff let-element>
       <button class="btn-primary" (click)="editMember(element)">編輯</button>
-      <button class="btn-primary" (click)="subordinate(element)">轄下</button>
+      <button class="btn-primary" (click)="routerChangeToSubordinate(element)">
+        轄下
+      </button>
     </ng-template>
 
     <ng-template #tempUnderJurisdiction let-element>
       <button class="btn-primary" (click)="editMember(element)">編輯</button>
-      <button class="btn-primary" (click)="subordinate(element)">轄下</button>
+      <button class="btn-primary" (click)="routerChangeToSubordinate(element)">
+        轄下
+      </button>
     </ng-template>
   `,
 
@@ -120,10 +125,14 @@ export class TableContainerComponent {
       this.navigationEvent.unsubscribe();
     }
   }
-
+  /**
+   *
+   *
+   * @param {string} res 麵包屑最後一個項目label
+   * @return {*}  {void}
+   * @memberof TableContainerComponent
+   */
   reload(res: string): void {
-    this.actionColumnTemplate = this.tempAddressBook;
-
     switch (res) {
       case 'home':
       case 'addressBook':
@@ -132,9 +141,16 @@ export class TableContainerComponent {
       case 'region':
         if (this.queryParams['region']) {
           this.goRegionAddressBook();
+        } else {
+          console.error('queryParams region is undefined');
         }
-        console.error('queryParams region is undefined');
-
+        return;
+      case 'superiorNumber':
+        if (this.queryParams['superiorNumber']) {
+          this.getSubordinate();
+        } else {
+          console.error('queryParams superiorNumber is undefined');
+        }
         return;
       case 'fieldStaff':
         this.getFieldStaff();
@@ -201,8 +217,16 @@ export class TableContainerComponent {
   /**編輯 */
   editMember(_t16: any) {}
   /**轄下 */
-  subordinate(item: Staff) {
+  routerChangeToSubordinate(item: Staff) {
+    const url = this.router.url.split('?')[0];
     const id = item.userId;
+    this.router.navigate(url.split('/'), {
+      queryParams: { superiorNumber: id },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  getSubordinate() {
     const api$ = this.queryParams['region']
       ? this.api.postUserAddressBook(this.queryParams['region'])
       : this.api.getFieldStaff();
@@ -210,7 +234,10 @@ export class TableContainerComponent {
     api$
       .pipe(
         map((res) => {
-          const a = res.filter((item) => item.superiorNumber === id);
+          const a = res.filter(
+            (item) =>
+              item.superiorNumber === this.queryParams['superiorNumber'],
+          );
           return a;
         }),
       )
