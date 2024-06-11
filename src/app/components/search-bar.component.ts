@@ -19,8 +19,8 @@ import { MemberEditorComponent } from './member-editor.component';
   template: `
     <div class="flex gap-2 m-2 justify-end">
       <mat-form-field>
-        <mat-select [(ngModel)]="criteria.location" placeholder="地區">
-          <mat-option [value]="item" *ngFor="let item of locationOpts">{{
+        <mat-select [(ngModel)]="criteria.location" placeholder="區域">
+          <mat-option [value]="item" *ngFor="let item of region">{{
             item
           }}</mat-option>
         </mat-select>
@@ -45,8 +45,9 @@ export class SearchBarComponent {
   };
   constructor(public dialog: MatDialog) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onSearch() {}
+  onSearch() {
+    console.log('//TODO:');
+  }
 
   add() {
     this.dialog.open(MemberEditorComponent, {
@@ -57,7 +58,7 @@ export class SearchBarComponent {
     });
   }
 
-  locationOpts = Object.values(LocationEnum);
+  region = [];
   affairOpts = ['affairA', 'affairB', 'affairC', 'affairD'];
 }
 

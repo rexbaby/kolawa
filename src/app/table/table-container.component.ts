@@ -1,4 +1,3 @@
-import { query } from '@angular/animations';
 import { CommonModule, NgIf } from '@angular/common';
 import {
   ChangeDetectorRef,
@@ -63,7 +62,11 @@ import { PermissionPipe } from '../shared/permission.pipe';
 
     <ng-template #tempFieldStaff let-element>
       <button class="btn-primary" (click)="editMember(element)">編輯</button>
-      <button class="btn-primary" (click)="routerChangeToSubordinate(element)">
+      <button
+        *ngIf="element && element?.superiorNumber"
+        class="btn-primary"
+        (click)="routerChangeToSubordinate(element)"
+      >
         轄下
       </button>
     </ng-template>
@@ -228,7 +231,9 @@ export class TableContainerComponent {
     this.cdr.detectChanges();
   }
   /**編輯 */
-  editMember(_t16: any) {}
+  editMember(_t16: any) {
+    console.log('//TODO: 編輯');
+  }
   /**轄下 */
   routerChangeToSubordinate(item: Staff) {
     const url = this.router.url.split('?')[0];
